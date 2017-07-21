@@ -1,0 +1,17 @@
+/* Pattern styles */
+.container {
+    display: table;
+    width: 100%;
+}
+
+.left-half {
+    position: absolute;
+    left: 5%;
+    width: 40%;
+}
+
+.right-half {
+    position: absolute;
+    right: 5%;
+    width: 40%;
+}

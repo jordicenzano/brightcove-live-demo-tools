@@ -1,0 +1,80 @@
+<html>
+    <head>
+        <title>Alive ID3 metadata demo</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+        <link href="./css/video-js.min.css" rel="stylesheet"> <!--Version: 5.14.1 -->
+        <script src="./js/video.js"></script> <!--Version: 5.14.1-->
+        <script src="./js/videojs-contrib-hls.js"></script> <!--Version: 4.0.2 -->
+
+        <link href="./css/id3-metadata-demo.css" rel="stylesheet"> <!--Version: 5.14.1 -->
+        <script src="js/id3-metadata-demo.js"></script>
+    </head>
+
+    <body onload="onLoadPage()">
+    <section class="container">
+        <div class="page-header">
+            <h1 id="title">Alive SSAI demo interface</h1>
+            <h2 id="jobId">Job id: - </h2>
+            <p id="playbackUrl">Playback URL: - </p>
+        </div>
+        <div id="errorAlert" class="alert alert-danger alert-dismissable fade in" style="display: none;">
+            <a href="#" class="close" data-dismiss="alert">&times;</a>
+            <strong>Error!</strong><div id="errMsg"></div>
+        </div>
+        <div class="left-half">
+            <article>
+                <video id="bcovVideoPlayback" poster="./pics/brightcove_logo_black.jpg" class="video-js vjs-default-skin vjs-16-9" controls></video>
+                <div class="container">
+                    <label for="playerTime">Time: </label>
+                    <input type="text" class="textfield" placeholder="-" readonly id="playerTime"/>
+                </div>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Detected ID3 tags:</th>
+                        </tr>
+                        </thead>
+                        <tbody class="spaceUnder2" id="detetedList"></tbody>
+                    </table>
+                </div>
+            </article>
+        </div>
+        <div class="right-half">
+            <article>
+                <h1>ID3 Insertion</h1>
+                <p>ID3 tags are inserted in the video segments, so even if you use DVR every time that video frame is reproduced the ID3 listener will be fired. Recommended to overlay TC to check the accuracy.</p>
+                <label for="adbreakId3Name">ID3 tag name:</label>
+                <input type="text" class="textfield" placeholder="BCOV" maxlength="4" id="adbreakId3Name"/><br><br>
+                <label for="adbreakId3Value">ID3 tag value:</label>
+                <input type="text" class="textfield" placeholder="abcdefg" id="adbreakId3Value"/><br><br>
+                <label for="adbreakTC">Insertion TC:</label>
+                <input type="text" class="textfield" value="00:01:00:00" id="adbreakTC" placeholder="HH:MM:SS:FF" maxlength="11" onkeypress="return isTCChar(event)" /><br><br>
+
+                <button id="injectID3" disabled class="btn btn-success" onclick='injectID3OnTC()'>Inject ID3 at TC</button>
+            </article>
+            <br>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Injected ID3 tags:</th>
+                    </tr>
+                    </thead>
+                    <tbody class="spaceUnder2" id="injectedList"></tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!--
+       Now, initialize your player. That's it!
+       -->
+    <script>
+        var player = videojs('bcovVideoPlayback');
+    </script>
+    </body>
+</html>

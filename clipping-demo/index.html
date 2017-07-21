@@ -1,0 +1,104 @@
+<html>
+    <head>
+        <title>Clipping Demo</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+        <link href="./css/video-js.min.css" rel="stylesheet"> <!--Version: 5.14.1 -->
+        <script src="./js/video.js"></script> <!-- MODIFIED DO NOT UPDATE Version: 5.14.1-->
+        <script src="./js/videojs-contrib-hls.js"></script> <!-- MODIFIED DO NOT UPDATE Version: 4.0.2 -->
+
+        <link href="./css/clipping-demo.css" rel="stylesheet"> <!--Version: 5.14.1 -->
+        <script src="js/clipping-demo.js"></script>
+    </head>
+    <body onload="onLoadPage()">
+    <section class="container">
+        <div class="page-header">
+            <h1 id="title">Clipping demo</h1>
+            <h2 id="jobId">Job id: - </h2>
+            <h2 id="vccreds">VC credentials name: - </h2>
+            <p id="playbackUrl">Playback URL: - </p>
+        </div>
+        <div id="errorAlert" class="alert alert-danger alert-dismissable fade in" style="display: none;">
+            <a href="#" class="close" data-dismiss="alert">&times;</a>
+            <strong>Error!</strong><div id="errMsg"></div>
+        </div>
+        <div class="left-half">
+            <article>
+                <video id="bcovVideoPlayback" poster="./pics/brightcove_logo_black.jpg" class="video-js vjs-default-skin vjs-16-9" controls></video>
+                <div class="container">
+                    <label for="playerTime">Time: </label>
+                    <input type="text" class="textfield" placeholder="-" readonly id="playerTime"/>
+                </div>
+                <button class="btn btn-success" onclick='playLive()'>Live</button>
+                <button class="btn btn-info" onclick='playVod()'>DVR</button>
+            </article>
+        </div>
+        <div class="right-half">
+            <article>
+                <h1>Clipping:</h1>
+                <div class="form-group table1" id="create_vod_section">
+                    <table>
+                        <col width=125>
+                        <col width=600>
+                        <tr class="spaceUnder">
+                            <td>
+                                <h4>Create Clip</h4>
+                            </td>
+                        </tr>
+                        <tr class="spaceUnder">
+                            <td>Start clip time</td>
+                            <td>
+                                <input type="text" id="totaldetetedin" value="0" hidden>
+                                <input type="text" style="width:100px" id="set_in_time" value="00:00:00" readonly>
+                                <button onclick="assignCurrentTimeToSetInTime()" id="set_in_time_btn" class="btn btn-info" disabled>Set</button>
+                            </td>
+                        </tr>
+                        <tr class="spaceUnder">
+                            <td>End clip time</td>
+                            <td>
+                                <input type="text" id="totaldetetedout" value="0" hidden>
+                                <input type="text" style="width:100px" id="set_out_time" value="00:00:00" readonly>
+                                <button onclick="assignCurrentTimeToSetOutTime()" id="set_out_time_btn" class="btn btn-info" disabled>Set</button>
+                            </td>
+                        </tr>
+                        <tr class="spaceUnder">
+                            <td>Clip Name</td>
+                            <td>
+                                <input type="text" style="width:100px" id="clip_name" value="Test Clip">
+                                Clip Tags
+                                <input type="text" style="width:100px" id="clip_tags" value="tag1,tag2">
+                            </td>
+                        </tr>
+                        <tr class="spaceUnder">
+                            <td>
+                                <button onclick="createVod()" class="btn btn-info">Create Clip</button>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>Clip status:</th>
+                            </tr>
+                            </thead>
+                            <tbody class="spaceUnder2" id="clipsList"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </article>
+        </div>
+    </section>
+      <!--
+         Now, initialize your player. That's it!
+         -->
+      <script>
+         var player = videojs('bcovVideoPlayback');
+         var timerSpinning = false;
+         var type = "live";
+      </script>
+   </body>
+</html>

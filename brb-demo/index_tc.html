@@ -1,0 +1,66 @@
+<html>
+   <head>
+       <title>Alive SSAI Demo interface</title>
+       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+       <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+       <link href="./css/video-js.min.css" rel="stylesheet"> <!--Version: 5.14.1 -->
+       <script src="./js/video.js"></script> <!--Version: 5.14.1-->
+       <script src="./js/videojs-contrib-hls.js"></script> <!--Version: 4.0.2 -->
+
+       <link href="./css/brb-demo.css" rel="stylesheet"> <!--Version: 5.14.1 -->
+       <script src="js/brb-demo.js"></script>
+   </head>
+   <body onload="onLoadPage()">
+   <section class="container">
+       <div class="page-header">
+           <h1 id="title">Alive SSAI demo interface</h1>
+           <h2 id="jobId">Job id: - </h2>
+           <h2 id="appId">App id: - </h2>
+           <p id="playbackUrl">Playback URL: - </p>
+       </div>
+       <div id="errorAlert" class="alert alert-danger alert-dismissable fade in" style="display: none;">
+           <a href="#" class="close" data-dismiss="alert">&times;</a>
+           <strong>Error!</strong><div id="errMsg"></div>
+       </div>
+       <div class="left-half">
+           <article>
+               <video id="bcovVideoPlayback" poster="./pics/brightcove_logo_black.jpg" class="video-js vjs-default-skin vjs-16-9" controls></video>
+           </article>
+       </div>
+       <div class="right-half">
+           <article>
+               <h1>AdBreak Controls at TC (frame accurate)</h1>
+               <p>Remember the encoder needs to send SMPTE timecode to be able to use this mode. Recommended to overlay TC to check the accuracy</p>
+               <label for="adbreakDur">Adbreak duration [s]:</label>
+               <input type="text" class="textfield" value="30" id="adbreakDur" onkeypress="return isNumber(event)" /><br><br>
+               <label for="adbreakData">Parameters for the ad server:</label>
+               <input type="text" class="textfield" placeholder="a=hola,b=2" id="adbreakData"/><br><br>
+               <label for="adbreakTC">Insertion TC:</label>
+               <input type="text" class="textfield" value="00:01:00:00" id="adbreakTC" placeholder="HH:MM:SS:FF" maxlength="11" onkeypress="return isTCChar(event)" /><br><br>
+
+               <button id="injectAdBreak" disabled class="btn btn-success" onclick='injectAdBreakOnTC()'>Inject adBreak at TC</button>
+           </article>
+           <br>
+           <div class="table-responsive">
+               <table class="table">
+                   <thead>
+                   <tr>
+                       <th>Injected adBreaks</th>
+                   </tr>
+                   </thead>
+                   <tbody class="spaceUnder2" id="injectedList"></tbody>
+               </table>
+           </div>
+       </div>
+   </section>
+
+      <!--
+         Now, initialize your player. That's it!
+         -->
+   <script>
+       var player = videojs('bcovVideoPlayback');
+   </script>
+   </body>
+</html>
