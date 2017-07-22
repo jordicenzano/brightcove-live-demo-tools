@@ -1,6 +1,6 @@
 <html>
    <head>
-       <title>Alive SSAI Demo interface</title>
+       <title>BRB frame accurate demo</title>
        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -17,7 +17,7 @@
    <body onload="onLoadPage()">
    <section class="container">
        <div class="page-header">
-           <h1 id="title">Alive SSAI demo interface</h1>
+           <h1 id="title">BRB frame accurate demo</h1>
            <h2 id="jobId">Job id: - </h2>
            <h2 id="appId">App id: - </h2>
            <p id="playbackUrl">Playback URL: - </p>
@@ -33,12 +33,10 @@
        </div>
        <div class="right-half">
            <article>
-               <h1>AdBreak Controls at TC (frame accurate)</h1>
+               <h1>AdBreak injection by TC (frame accurate)</h1>
                <ul>
-                   <li>Remember the encoder needs to send SMPTE timecode to be able to use this ID3 insertion mode</li>
-                   <li>To check the accuracy is recommended to overlay the SMPTE TC on the video</li>
-                   <li>Remember the ID3 tag is injected in the source stream at the moment you click the button, this means the ID3 tag will be inserted at that moment IN THE SOURCE STREAM. It will take 3 * target_duration approx to see the ID3 tag in the player</li>
-                   <li>ID3 tags are inserted in the video segments, so even if you use DVR every time that video frame is reproduced the ID3 listener will be fired</li>
+                   <li>The encoder needs to send SMPTE timecode to be able to use this adBreak injection mode</li>
+                   <li>It is recommended to overlay the SMPTE TC on the video to check the accuracy</li>
                </ul><br>
                <label for="adbreakDur">Adbreak duration [s]:</label>
                <input type="text" class="textfield" value="30" id="adbreakDur" onkeypress="return keyIsNumber(event)" /><br><br>
