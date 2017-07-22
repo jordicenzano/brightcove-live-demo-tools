@@ -6,6 +6,7 @@
        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
        <link href="css/brb-demo.css" rel="stylesheet"> <!--Version: 5.14.1 -->
+       <script src="js/demo-common.js"></script>
        <script src="js/demo-index.js"></script>
    </head>
    <body onload="onLoadPage()">
@@ -41,23 +42,23 @@
                <label for="vccreds">VC creds name (the name you configured your VC creds in alive, only needed for live to VOD):</label>
                <input type="text" class="form-control" id="vccreds">
            </div>
-           <br><br>
+           <br>
            <div class="form-group">
-               <label for="insertAdBreak">Inject adBreak:</label><br>
+               <label for="insertAdBreak">Inject adBreak:</label>
                <div id="insertAdBreak" class="btn-group">
                    <button id="gossai" type="button" onclick="openDemoBRB()" class="btn btn-success">BRB (Immediate)</button>
                    <button id="gossaitc" type="button" onclick="opendemoBRBTC()" class="btn btn-success">By SMPTE TC (frame accurate)</button>
                </div>
            </div>
            <div class="form-group">
-               <label for="insertID3">Inject / read ID3 tags:</label><br>
+               <label for="insertID3">Inject / read ID3 tags:</label>
                <div id="insertID3" class="btn-group">
                    <button id="goid3" type="button" onclick="opendemoID3()" class="btn btn-success">Inject BRB (Immediate)</button>
                    <button id="goid3tc" type="button" onclick="opendemoID3TC()" class="btn btn-success">Inject by SMPTE TC (frame accurate)</button>
                </div>
            </div>
            <div class="form-group">
-               <label for="clipping">Clipping (just internal demos, not prod ready):</label><br>
+               <label for="clipping">Clipping (just internal demos, not prod ready):</label>
                <div id="clipping" class="btn-group">
                    <button id="goclipping" type="button" onclick="opendemoClipping()" class="btn btn-success">Live to VOD</button>
                </div>

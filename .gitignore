@@ -1,3 +1,4 @@
 .*
 !.gitignore
-deploy_??.sh
+deploy/deploy_??.sh
+deploy/clean_??.sh

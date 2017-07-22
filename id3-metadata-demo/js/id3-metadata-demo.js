@@ -7,21 +7,14 @@ var jobId = "";
 
 var playbackurl = "";
 
-//PROD base url
-var baseUrl = "https://api.bcovlive.io/v1";
+var baseUrl = "";
 
 function onLoadPage() {
     var url_vars = getUrlVars();
 
     console.log("URL detected vars = " + JSON.stringify(url_vars));
 
-    //Use QA/ST env if is explicitly specified
-    if ("env" in url_vars) {
-        if (url_vars.env === "qa")
-            baseUrl = "https://api-qa.a-live.io/v1";
-        else if (url_vars.env === "st")
-            baseUrl = "https://api-st.a-live.io/v1";
-    }
+    baseUrl = getBaseUrlFromUrlVars(url_vars.env);
 
     if ( (!("apikey" in url_vars)) || (!("jobid" in url_vars)) ) {
         showInputParamsAlert();
@@ -32,66 +25,38 @@ function onLoadPage() {
 
         console.log("Detected params ApiUrl: " + baseUrl + ",apiKey: " + apiKey + ", JobId: " + jobId);
 
-        refreshJobId();
+        refreshJobId(jobId);
 
-        getJobData();
+        aliveGetJobData();
     }
 }
 
-function getUrlVars() {
-    var vars = {};
-    window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
-        vars[key] = value;
-    });
-
-    return vars;
-}
-
-function refreshJobId() {
-    document.getElementById("jobId").innerHTML = "Job id: " + jobId;
+function refreshJobId(jobid) {
+    refreshElementInnerHTML("jobId", "Job id: " + jobid);
 }
 
 function refreshPlaybackUrl(url) {
-    document.getElementById("playbackUrl").innerHTML = "Playback URL: " + url;
+    refreshElementInnerHTML("playbackUrl", "Playback URL: " + url);
 }
 
-function getJobData() {
-    var url = baseUrl + "/jobs/" + jobId;
+function aliveGetJobData () {
+    getJobData(baseUrl, jobId, function (err, data) {
+        if (err)
+            return showError(err);
 
-    $.ajax({
-        url: url,
-        method: 'GET',
-        dataType: 'json',
-        timeout: 20000,
-        headers: {
-            'x-api-key': apiKey,
-            'Content-Type': 'application/json'
-        },
-        data: "",
+        if (!("playback_url" in data))
+            return showError("getting default playbackurl from job");
 
-        success: function(data) {
-            if ("errorType" in data) {
-                return showError("Received from getting job data" + JSON.stringify(data.errorMessage));
-            }
+        //Workaround to make it work in HTTPS
+        playbackurl = translateHttps(data.playback_url);
 
-            if ( !("job" in data) || !("playback_url" in data.job))
-                return showError("getting default playbackurl from job");
+        refreshPlaybackUrl(playbackurl);
 
-            //Workaround to make it work in HTTPS
-            playbackurl = translateHttps(data.job.playback_url);
+        loadVideo(playbackurl, true);
 
-            refreshPlaybackUrl(playbackurl);
+        refreshPlayerTime();
 
-            loadVideo(playbackurl, true);
-
-            refreshPlayerTime();
-
-            enableAdId3Injection(true);
-        },
-        error: function(msg) {
-            return showError("Error getting job data: " + JSON.stringify(msg));
-
-        }
+        enableAdId3Injection(true);
     });
 }
 
@@ -117,24 +82,25 @@ function loadVideo(url, play) {
 function setupMetadata() {
     var textTracks = player.textTracks();
 
-    textTracks.one('addtrack', function() {
-        var tt = player.textTracks()[0];
-        tt.mode = 'hidden';
+    //Notify every time an textTrack is added
+    textTracks.on('addtrack', function(obj) {
+        if ("track" in obj) {
+            var track = obj.track;
 
-        tt.oncuechange = function() {
-            if (tt.activeCues[0] !== undefined)
-                addID3TagToDetectedList(tt.activeCues[0]);
+            //Ensure we get the correct track with ID3 timed metadata
+            if ( ("label" in track) && (track.label.toLowerCase().indexOf("timed metadata") >= 0) ) {
+                //Ensure track is hidden
+                track.mode = 'hidden';
+
+                //Add a listener every time the cue change
+                track.oncuechange = function() {
+
+                    if (track.activeCues[0] !== undefined)
+                        addID3TagToDetectedList(track.activeCues[0]);
+                }
+            }
         }
-    })
-}
-
-function convertAscii(asciiText) {
-    var parts = asciiText.split(",");
-    var res = "";
-    for (var i = 0; i < parts.length; i++) {
-        res += String.fromCharCode(parts[i]);
-    }
-    return res;
+    });
 }
 
 function addID3TagToDetectedList(data) {
@@ -144,21 +110,13 @@ function addID3TagToDetectedList(data) {
 
     var newID3_text = newID3.insertCell(0);
 
-    var str = "id: " + data.id + ", ";
-    str += data.value.key + ": " + convertAscii(data.text) + ", ";
-    str += "startTime: " + data.startTime + ",  ";
-    str += "endTime: " + data.endTime + "\n";
+    newID3_text.innerHTML = "key: " + data.value.key + " (" + data.startTime + "-" + data.endTime + " : " + (data.endTime - data.startTime) + "s). data: " + convertAscii(data.value.data);
 
-    newID3_text.innerHTML = str;
-
-    if (detected_list.childNodes.length > 0)
-        detected_list.insertBefore(newID3, detected_list.childNodes[0]);
-    else
-        detected_list.appendChild(newID3);
+    insertOnTopOfList(detected_list, newID3);
 }
 
 function enableAdId3Injection(b) {
-    document.getElementById("injectID3").disabled = !b;
+    enableElement("injectID3", b);
 }
 
 function injectID3() {
@@ -185,20 +143,14 @@ function injectID3OnTC() {
     var id3value = document.getElementById("adbreakId3Value").value;
     var tc = document.getElementById("adbreakTC").value;
 
-    if ( (typeof (id3name) !== 'string') || (id3name.trim().length !== 4) ) {
-        showError("Wrong format in ID3 name, should be 4 chars long");
-        return;
-    }
+    if ( (typeof (id3name) !== 'string') || (id3name.trim().length !== 4) )
+        return showError("Wrong format in ID3 name, should be 4 chars long");
 
-    if ( (typeof (id3value) !== 'string') || (id3value.trim() === "" ) ) {
-        showError("Wrong format in ID3 value, should be a not empty string");
-        return;
-    }
+    if ( (typeof (id3value) !== 'string') || (id3value.trim() === "" ) )
+        return showError("Wrong format in ID3 value, should be a not empty string");
 
-    if (!isTCFormatted(tc)) {
-        showError("Wrong format in TC");
-        return;
-    }
+    if (!isTCFormatted(tc))
+        return showError("Wrong format in TC");
 
     enableAdId3Injection(false);
 
@@ -273,53 +225,15 @@ function addID3TagToSentList(time, tc, data) {
 
     newID3_text.innerHTML = "Injected at: " + new Date(time).toISOString() + label + server_time + ". Accuracy: " + accuracy;
 
-    if (injected_list.childNodes.length > 0)
-        injected_list.insertBefore(newID3, injected_list.childNodes[0]);
-    else
-        injected_list.appendChild(newID3);
+    insertOnTopOfList(injected_list, newID3);
 }
 
 function showInputParamsAlert() {
     showError("A problem has been occurred reading required data from querystring.Remember the URL format to use this page is:<br>MYSERVER.abc/brb-demo/index.html?env=qa/st/pr&apikey=abcedfghijklmopq&jobid=abcd1234abcd1234abcd1234abcd1234");
 }
 
-function showError (msg) {
-    console.error(msg);
-
-    document.getElementById("errMsg").innerHTML = msg;
-    $('#errorAlert').fadeIn('slow');
-}
-
-function translateHttps (url) {
-    return url.replace(/^http:/,'https:')
-}
-
-function isTCChar(event) {
-    var regex = new RegExp("^[0-9:]+$");
-    var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
-    if (!regex.test(key)) {
-        event.preventDefault();
-        return false;
-    }
-}
-
-function isTCFormatted(str) {
-    var ret = false;
-
-    if (typeof (str) !== 'string')
-        return ret;
-
-    var patt = new RegExp('^([0-1][0-9]|[2][0-3]):([0-5][0-9]):([0-5][0-9]):([0-9]+)$');
-
-    return patt.test(str);
-}
-
 function refreshPlayerTime() {
-    document.getElementById("playerTime").removeAttribute("readonly");
-
-    document.getElementById("playerTime").value = player.currentTime();
-
-    document.getElementById("playerTime").setAttribute("readonly", true);
+    refreshElementReadOnlyValue("playerTime", player.currentTime());
 
     setTimeout(refreshPlayerTime, 20.0);
 }

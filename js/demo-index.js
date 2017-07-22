@@ -2,13 +2,6 @@ function onLoadPage() {
     getEnv();
 }
 
-function showError (msg) {
-    console.error(msg);
-
-    document.getElementById("errMsg").innerHTML = msg;
-    $('#errorAlert').fadeIn('slow');
-}
-
 function refreshAndSelectenv (env) {
     var env_sel = document.getElementById("env");
 
@@ -51,7 +44,7 @@ function getEnv() {
 function errorGettingEnv(msg) {
     document.getElementById("env").disabled = false;
 
-    return showError("Error getting env: " + JSON.stringify(msg));
+    showError("Error getting env: " + JSON.stringify(msg));
 }
 
 function openDemoBRB() {
@@ -139,32 +132,6 @@ function envValidation(env_name) {
 
     if ((typeof (env_name) == 'string') && (env_name != ""))
         ret = true;
-
-    return ret;
-}
-
-function guidValidation(jobId) {
-    var ret = false;
-
-    if ((typeof (jobId) === 'string') && (jobId.length === 32)) {
-        var regexpjobid = new RegExp(/^[a-fA-F0-9]*$/g);
-        var found = jobId.match(regexpjobid);
-        if ( (found != null) && (found.length > 0) )
-            ret = true;
-    }
-
-    return ret;
-}
-
-function apiKeyValidation(apikey) {
-    var ret = false;
-
-    if ((typeof (apikey) === 'string') && (apikey.length > 5)) {
-        var regexpapikey = new RegExp(/^[a-zA-Z0-9]*$/g);
-        var found = apikey.match(regexpapikey);
-        if ( (found != null) && (found.length > 0) )
-            ret = true;
-    }
 
     return ret;
 }

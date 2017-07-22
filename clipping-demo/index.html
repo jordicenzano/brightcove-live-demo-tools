@@ -1,6 +1,6 @@
 <html>
     <head>
-        <title>Clipping Demo</title>
+        <title>Clipping Demo to VC</title>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -9,13 +9,15 @@
         <script src="./js/video.js"></script> <!-- MODIFIED DO NOT UPDATE Version: 5.14.1-->
         <script src="./js/videojs-contrib-hls.js"></script> <!-- MODIFIED DO NOT UPDATE Version: 4.0.2 -->
 
-        <link href="./css/clipping-demo.css" rel="stylesheet"> <!--Version: 5.14.1 -->
+        <link href="./css/clipping-demo.css" rel="stylesheet">
+
+        <script src="../js/demo-common.js"></script>
         <script src="js/clipping-demo.js"></script>
     </head>
     <body onload="onLoadPage()">
     <section class="container">
         <div class="page-header">
-            <h1 id="title">Clipping demo</h1>
+            <h1 id="title">Clipping demo to VC</h1>
             <h2 id="jobId">Job id: - </h2>
             <h2 id="vccreds">VC credentials name: - </h2>
             <p id="playbackUrl">Playback URL: - </p>
@@ -26,7 +28,7 @@
         </div>
         <div class="left-half">
             <article>
-                <video id="bcovVideoPlayback" poster="./pics/brightcove_logo_black.jpg" class="video-js vjs-default-skin vjs-16-9" controls></video>
+                <video id="bcovVideoPlayback" poster="../pics/brightcove_logo_black.jpg" class="video-js vjs-default-skin vjs-16-9" controls></video>
                 <div class="container">
                     <label for="playerTime">Time: </label>
                     <input type="text" class="textfield" placeholder="-" readonly id="playerTime"/>
@@ -38,6 +40,7 @@
         <div class="right-half">
             <article>
                 <h1>Clipping:</h1>
+                <p>This demo is ONLY for internal use, not ready for prod</p>
                 <div class="form-group table1" id="create_vod_section">
                     <table>
                         <col width=125>

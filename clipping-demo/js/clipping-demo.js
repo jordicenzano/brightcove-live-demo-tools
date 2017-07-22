@@ -8,8 +8,7 @@ var videocloud_cred = "";
 
 var playbackurl = "";
 
-//PROD base url
-var baseUrl = "https://api.bcovlive.io/v1";
+var baseUrl = "";
 
 //Global control
 var gl_job = {
@@ -25,13 +24,7 @@ function onLoadPage() {
 
     console.log("URL detected vars = " + JSON.stringify(url_vars));
 
-    //Use QA/ST env if is explicitly specified
-    if ("env" in url_vars) {
-        if (url_vars.env === "qa")
-            baseUrl = "https://api-qa.a-live.io/v1";
-        else if (url_vars.env === "st")
-            baseUrl = "https://api-st.a-live.io/v1";
-    }
+    baseUrl = getBaseUrlFromUrlVars(url_vars.env);
 
     if ( (!("apikey" in url_vars)) || (!("jobid" in url_vars)) || (!("vccreds" in url_vars)) ) {
         showInputParamsAlert();
@@ -43,61 +36,23 @@ function onLoadPage() {
 
         console.log("Detected params ApiUrl: " + baseUrl + ",apiKey: " + apiKey + ", JobId: " + jobId + ", vccreds: " + videocloud_cred);
 
-        refreshJobId();
-        refreshVCreds();
+        refreshJobId(jobId);
+        refreshVCreds(videocloud_cred);
 
         loadPlaylist("live");
     }
-}
-
-function getUrlVars() {
-    var vars = {};
-    window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
-        vars[key] = value;
-    });
-
-    return vars;
 }
 
 function showInputParamsAlert() {
     showError("A problem has been occurred reading required data from querystring.Remember the URL format to use this page is:<br>MYSERVER.abc/brb-demo/index.html?env=qa/st/pr&apikey=abcedfghijklmopq&jobid=abcd1234abcd1234abcd1234abcd1234&vccreds=VCcreds");
 }
 
-function refreshJobId() {
-    document.getElementById("jobId").innerHTML = "Job id: " + jobId;
+function refreshJobId(jobid) {
+    refreshElementInnerHTML("jobId", "Job id: " + jobid);
 }
 
-function refreshVCreds() {
-    document.getElementById("vccreds").innerHTML = "VC credentials name: " + videocloud_cred;
-}
-
-function getUrlVars() {
-    var vars = {};
-    window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
-      vars[key] = value;
-    });
-
-    return vars;
-}
-
-function refreshReadOnlyValue(ref, data) {
-    $("#" + ref).removeAttr("readonly");
-
-    var linkRef = document.getElementById(ref);
-    if ((data === null) || (data == ""))
-        linkRef.value = "-";
-
-    linkRef.value = data;
-
-    $("#" + ref).attr("readonly", true);
-}
-
-function refreshHiddenValue(ref, data) {
-    var linkRef = document.getElementById(ref);
-    if ((data === null) || (data == ""))
-        linkRef.value = "-";
-
-    linkRef.value = data;
+function refreshVCreds(vccreds) {
+    refreshElementInnerHTML("vccreds", "VC credentials name: " + videocloud_cred);
 }
 
 function loadVideoWithTimer(url, play) {
@@ -112,14 +67,6 @@ function loadVideoWithTimer(url, play) {
         player.play();
         console.log("Play!");
     }
-}
-
-function timeToSeconds(time) {
-    var timeArr = time.split(":");
-    var hour = Number(timeArr[0]);
-    var minute = Number(timeArr[1]);
-    var second = Number(timeArr[2]);
-    return hour * 3600 + minute * 60 + second;
 }
 
 function getVodStatus(jvod_id, clip_name) {
@@ -143,7 +90,7 @@ function getVodStatus(jvod_id, clip_name) {
                 var status = data.vod.jvod_state;
 
                 console.log("Status = " + status);
-                refreshReadOnlyValue(jvod_id + "_status", status);
+                refreshElementReadOnlyValue(jvod_id + "_status", status);
 
                 if (status == "creating_asset") {
                     console.log("status: creating_asset (available in S3!)");
@@ -186,10 +133,7 @@ function refreshVodStatus(jvod_id, clip_name) {
 
     newclip.setAttribute('id', jvod_id);
 
-    if (clip_list.childNodes.length > 0)
-        clip_list.insertBefore(newclip, clip_list.childNodes[0]);
-    else
-        clip_list.appendChild(newclip);
+    insertOnTopOfList(clip_list, newclip);
 
     getVodStatus(jvod_id, clip_name);
 }
@@ -197,12 +141,12 @@ function refreshVodStatus(jvod_id, clip_name) {
 function createVod() {
     var url = baseUrl + "/vods";
 
-    var in_time_s = timeToSeconds(document.getElementById('set_in_time').value);
+    var in_time_s = timeStrToSeconds(document.getElementById('set_in_time').value);
     var in_total_deleted = parseFloat(document.getElementById('totaldetetedin').value);
     var set_in_time_s = in_time_s + in_total_deleted;
     console.log("Compensating IN point. In stream: " + in_time_s + ". Total deleted: " + in_total_deleted + ". Result: " + set_in_time_s);
 
-    var out_time_s = timeToSeconds(document.getElementById('set_out_time').value);
+    var out_time_s = timeStrToSeconds(document.getElementById('set_out_time').value);
     var out_total_deleted = parseFloat(document.getElementById('totaldetetedout').value);
     var set_out_time_s = out_time_s + out_total_deleted;
     console.log("Compensating OUT point. In stream: " + out_time_s + ". Total deleted: " + out_total_deleted + ". Result: " + set_out_time_s);
@@ -210,10 +154,8 @@ function createVod() {
     var clip_name = document.getElementById('clip_name').value;
     var clip_tags = document.getElementById('clip_tags').value;
 
-    if(clip_name.trim() == "") {
-      alert("Clip Name can't be empty !");
-      return;
-    }
+    if(clip_name.trim() === "")
+        return showError("Clip Name can not be empty");
 
     var clip_tags_arr = clip_tags.split(",");
 
@@ -261,6 +203,7 @@ function createVod() {
 }
 
 function loadPlaylist(liveOrVod) {
+    //This request uses and old EP and SHOULD NOT BE USED IN PROD
     var url = baseUrl + "/ui/jobs/live/" + jobId;
 
     //If we already have the playlist value use it do not ask again, they won't change
@@ -324,13 +267,15 @@ function loadPlaylist(liveOrVod) {
 }
 
 function refreshPlaybackUrl(url) {
-    document.getElementById("playbackUrl").innerHTML = "Playback URL: " + url;
+    refreshElementInnerHTML("playbackUrl",  "Playback URL: " + url);
 }
 
 function playLive() {
     loadPlaylist("live");
+
     $("#set_in_time_btn").prop("disabled", true);
     $("#set_out_time_btn").prop("disabled", true);
+
     type = "live";
     if (!timerSpinning) {
         timerSpinning = true;
@@ -340,8 +285,10 @@ function playLive() {
 
 function playVod() {
     loadPlaylist("vod");
+
     $("#set_in_time_btn").prop("disabled", false);
     $("#set_out_time_btn").prop("disabled", false);
+
     type = "vod";
     player.on("loadeddata", goToEndOfVod);
     if (!timerSpinning) {
@@ -368,45 +315,22 @@ function goToEndOfVod() {
 }
 
 function refreshTimer() {
-    refreshReadOnlyValue("playerTime", type === "live" ? "--:--:--" : secondsToTime(player.currentTime()));
+    refreshElementReadOnlyValue("playerTime", type === "live" ? "--:--:--" : secondsToTimeStr(player.currentTime()));
     setTimeout(refreshTimer, 250.0);
-}
-
-function secondsToTime(seconds) {
-    var hour = parseInt(seconds / 3600);
-    if (hour < 10) {
-        hour = '0' + hour;
-    }
-    var minute = parseInt((seconds % 3600) / 60);
-    if (minute < 10) {
-        minute = '0' + minute;
-    }
-    var second = (seconds % 60).toFixed(3);
-    if (second < 10) {
-        second = '0' + second;
-    }
-    return [hour, minute, second].join(":");
 }
 
 function assignCurrentTimeToSetInTime() {
     var time = player.currentTime();
-    refreshReadOnlyValue("set_in_time", secondsToTime(time));
+    refreshElementReadOnlyValue("set_in_time", secondsToTimeStr(time));
 
-    refreshHiddenValue("totaldetetedin", gl_job.gl_vod_current_deleted_duration_s);
+    refreshElementValue("totaldetetedin", gl_job.gl_vod_current_deleted_duration_s);
 }
 
 function assignCurrentTimeToSetOutTime() {
     var time = player.currentTime();
-    refreshReadOnlyValue("set_out_time", secondsToTime(time));
+    refreshElementReadOnlyValue("set_out_time", secondsToTimeStr(time));
 
-    refreshHiddenValue("totaldetetedout", gl_job.gl_vod_current_deleted_duration_s);
-}
-
-function showError (msg) {
-    console.error(msg);
-
-    document.getElementById("errMsg").innerHTML = msg;
-    $('#errorAlert').fadeIn('slow');
+    refreshElementValue("totaldetetedout", gl_job.gl_vod_current_deleted_duration_s);
 }
 
 //Choose the correct rendition to create the VOD (the same that the brain worker will use)
@@ -459,8 +383,4 @@ function isIncludedInAlivePlaylist(out, playlists) {
     }
 
     return ret;
-}
-
-function translateHttps (url) {
-    return url.replace(/^http:/,'https:')
 }

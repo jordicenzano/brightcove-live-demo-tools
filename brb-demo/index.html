@@ -5,11 +5,13 @@
        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
-       <link href="./css/video-js.min.css" rel="stylesheet"> <!--Version: 5.14.1 -->
-       <script src="./js/video.js"></script> <!--Version: 5.14.1-->
-       <script src="./js/videojs-contrib-hls.js"></script> <!--Version: 4.0.2 -->
+       <link href="https://vjs.zencdn.net/6.1.0/video-js.css" rel="stylesheet">
+       <!-- If you'd like to support IE8 -->
+       <script src="https://vjs.zencdn.net/ie8/1.1.2/videojs-ie8.min.js"></script>
 
-       <link href="./css/brb-demo.css" rel="stylesheet"> <!--Version: 5.14.1 -->
+       <link href="./css/brb-demo.css" rel="stylesheet">
+
+       <script src="../js/demo-common.js"></script>
        <script src="js/brb-demo.js"></script>
    </head>
    <body onload="onLoadPage()">
@@ -26,15 +28,19 @@
        </div>
        <div class="left-half">
            <article>
-               <video id="bcovVideoPlayback" poster="./pics/brightcove_logo_black.jpg" class="video-js vjs-default-skin vjs-16-9" controls></video>
+               <video id="bcovVideoPlayback" poster="../pics/brightcove_logo_black.jpg" class="video-js vjs-default-skin vjs-16-9" controls></video>
            </article>
        </div>
        <div class="right-half">
            <article>
                <h1>AdBreak Controls (BRB)</h1>
-               <p>Remember the AdBreak is injected in the source stream at the moment you click the button, this means the adBreak will be inserted at that moment IN THE SOURCE STREAM. It will take 3 * target_duration approx to see the adBreak in the player</p>
+               <ul>
+                   <li>Remember the AdBreak is injected in the source stream at the moment you click the button, this means the adBreak will be inserted at that moment IN THE SOURCE STREAM. It will take 4 * target_duration approx to see the adBreak in the player</li>
+                   <li>In the adBreak response you have the server time when this adbreak was injected</li>
+                   <li>To check the accuracy is recommended to overlay the system time and the video</li>
+               </ul><br>
                <label for="adbreakDur">Adbreak duration [s]:</label>
-               <input type="text" class="textfield" value="30" id="adbreakDur" onkeypress="return isNumber(event)" /><br>
+               <input type="text" class="textfield" value="30" id="adbreakDur" onkeypress="return keyIsNumber(event)" /><br>
                <label for="adbreakData">Parameters for the ad server:</label>
                <input type="text" class="textfield" placeholder="a=hola,b=2" id="adbreakData"/><br><br>
                <button id="injectAdBreak" disabled class="btn btn-success" onclick='injectAdBreak()'>Inject adBreak NOW</button>
@@ -53,9 +59,12 @@
        </div>
    </section>
 
-      <!--
-         Now, initialize your player. That's it!
-         -->
+   <script src="https://vjs.zencdn.net/6.1.0/video.js"></script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/videojs-contrib-hls/5.8.2/videojs-contrib-hls.js"></script>
+
+   <!--
+      Now, initialize your player. That's it!
+      -->
    <script>
        var player = videojs('bcovVideoPlayback');
    </script>
