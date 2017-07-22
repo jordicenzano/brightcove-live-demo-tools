@@ -49,7 +49,7 @@
         <article>
             <h1>ID3 Insertion</h1>
             <ul>
-                <li>The ID3 tag is injected in the source stream at the moment you click the button, this means the ID3 tag will be inserted at that moment IN THE SOURCE STREAM. It will take 3 * target_duration approx to see the ID3 tag in the player</li>
+                <li>The ID3 tag is inserted in the source stream at the moment you click the button, this means the ID3 tag will be inserted at that moment IN THE SOURCE STREAM. It will take 3 * target_duration approx to see the ID3 tag in the player</li>
                 <li>ID3 tags are inserted in the video segments, so even if you use DVR every time that video frame is reproduced the ID3 listener will be fired</li>
             </ul><br>
             <label for="adbreakId3Name">ID3 tag name:</label>
@@ -57,14 +57,14 @@
             <label for="adbreakId3Value">ID3 tag value:</label>
             <input type="text" class="textfield" placeholder="abcdefg" id="adbreakId3Value"/><br><br>
 
-            <button id="injectID3" disabled class="btn btn-success" onclick='injectID3()'>Inject ID3 now</button>
+            <button id="injectID3" disabled class="btn btn-success" onclick='injectID3()'>Insert ID3 now</button>
         </article>
         <br>
         <div class="table-responsive">
             <table class="table">
                 <thead>
                 <tr>
-                    <th>Injected ID3 tags:</th>
+                    <th>Inserted ID3 tags:</th>
                 </tr>
                 </thead>
                 <tbody class="spaceUnder2" id="injectedList"></tbody>

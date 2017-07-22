@@ -33,9 +33,9 @@
        </div>
        <div class="right-half">
            <article>
-               <h1>AdBreak injection (BRB)</h1>
+               <h1>AdBreak insertion (BRB)</h1>
                <ul>
-                   <li>The AdBreak is injected in the source stream at the moment you click the button, this means the adBreak will be inserted at that moment IN THE SOURCE STREAM. It will take 4 * target_duration approx to see the adBreak in the player</li>
+                   <li>The AdBreak is inserted in the source stream at the moment you click the button, this means the adBreak will be inserted at that moment IN THE SOURCE STREAM. It will take 4 * target_duration approx to see the adBreak in the player</li>
                    <li>In the adBreak response you have the server time when this adbreak was injected</li>
                    <li>To check the accuracy is recommended to overlay the system time and the video</li>
                </ul><br>
@@ -43,14 +43,14 @@
                <input type="text" class="textfield" value="30" id="adbreakDur" onkeypress="return keyIsNumber(event)" /><br>
                <label for="adbreakData">Parameters for the ad server:</label>
                <input type="text" class="textfield" placeholder="a=hola,b=2" id="adbreakData"/><br><br>
-               <button id="injectAdBreak" disabled class="btn btn-success" onclick='injectAdBreak()'>Inject adBreak NOW</button>
+               <button id="injectAdBreak" disabled class="btn btn-success" onclick='injectAdBreak()'>Insert adBreak NOW</button>
            </article>
            <br>
            <div class="table-responsive">
                <table class="table">
                    <thead>
                    <tr>
-                       <th>Injected adBreaks</th>
+                       <th>Inserted adBreaks</th>
                    </tr>
                    </thead>
                    <tbody class="spaceUnder2" id="injectedList"></tbody>

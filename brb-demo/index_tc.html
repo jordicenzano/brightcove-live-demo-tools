@@ -33,7 +33,7 @@
        </div>
        <div class="right-half">
            <article>
-               <h1>AdBreak injection by TC (frame accurate)</h1>
+               <h1>AdBreak insertion by TC (frame accurate)</h1>
                <ul>
                    <li>The encoder needs to send SMPTE timecode to be able to use this adBreak injection mode</li>
                    <li>It is recommended to overlay the SMPTE TC on the video to check the accuracy</li>
@@ -45,14 +45,14 @@
                <label for="adbreakTC">Insertion TC:</label>
                <input type="text" class="textfield" value="00:01:00:00" id="adbreakTC" placeholder="HH:MM:SS:FF" maxlength="11" onkeypress="return keyIsTCChar(event)" /><br><br>
 
-               <button id="injectAdBreak" disabled class="btn btn-success" onclick='injectAdBreakOnTC()'>Inject adBreak at TC</button>
+               <button id="injectAdBreak" disabled class="btn btn-success" onclick='injectAdBreakOnTC()'>Insert adBreak at TC</button>
            </article>
            <br>
            <div class="table-responsive">
                <table class="table">
                    <thead>
                    <tr>
-                       <th>Injected adBreaks</th>
+                       <th>Inserted adBreaks</th>
                    </tr>
                    </thead>
                    <tbody class="spaceUnder2" id="injectedList"></tbody>
