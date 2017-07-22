@@ -47,14 +47,14 @@ function errorGettingEnv(msg) {
     showError("Error getting env: " + JSON.stringify(msg));
 }
 
-function openDemoBRB() {
-    var url = "./brb-demo/index.html";
+function openDemoAdBreak() {
+    var url = "./adbreak-demo/index.html";
 
     openDemo(url);
 }
 
-function opendemoBRBTC() {
-    var url = "./brb-demo/index_tc.html";
+function openDemoAdBreakTC() {
+    var url = "./adbreak-demo/index_tc.html";
 
     openDemo(url);
 }
