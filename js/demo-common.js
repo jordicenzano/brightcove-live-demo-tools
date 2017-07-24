@@ -178,3 +178,36 @@ function secondsToTimeStr(seconds) {
     }
     return [hour, minute, second].join(":");
 }
+
+
+function dateToFormattedStr(date) {
+    return date.getFullYear().toString() + "/" + ensure2DigitsStr(date.getMonth() + 1) + "/" + ensure2DigitsStr(date.getDay()) + " " + ensure2DigitsStr(date.getHours()) + ":" + ensure2DigitsStr(date.getMinutes()) + ":" + ensure2DigitsStr(date.getSeconds());
+}
+
+function ensure2DigitsStr(num) {
+    var ret = num.toString();
+
+    if (ret.length < 2)
+        ret = "0" + ret;
+
+    return ret;
+}
+
+function formattedDateToEpochs(date_str) {
+    var ret = 0;
+    var regexpdate = new RegExp(/(\d\d\d\d)\/(0[0-9]|1[0-2])\/(0[0-9]|1[0-9]|2[0-9]|3[0-1]) (0[0-9]|1[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])/);
+
+    var found = date_str.match(regexpdate);
+    if ( (found !== null) && (found.length > 6) ) {
+        var yyyy = parseInt(found[1]);
+        var MM = parseInt(found[2]);
+        var dd = parseInt(found[3]);
+        var hh = parseInt(found[4]);
+        var mm = parseInt(found[5]);
+        var ss = parseInt(found[6]);
+
+        ret = new Date(Date.UTC(yyyy, MM - 1, dd, hh, mm, ss, 0)).getTime() / 1000;
+    }
+
+    return ret;
+}

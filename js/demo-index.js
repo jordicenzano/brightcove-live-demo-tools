@@ -77,6 +77,18 @@ function opendemoClipping() {
     openDemo(url, true);
 }
 
+function opendemoInstantClipping() {
+    var url = "./instant-clipping-demo/index.html";
+
+    openDemo(url);
+}
+
+function opendemoInstantClippingTime() {
+    var url = "./instant-clipping-demo/index_time.html";
+
+    openDemo(url);
+}
+
 function openDemo(url, need_vc_creds) {
     var env_name = getSelectedEnv();
     var apikey = document.getElementById("apikey").value;
